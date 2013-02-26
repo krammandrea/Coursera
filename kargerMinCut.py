@@ -10,7 +10,7 @@ def kargersContract():
     #read file into adjecency lists, vertex list pointing to each edge, edge list pointing to two connecting vertices
     vertices =[]
 
-    inputText = open("kargerMinCut.txt","r")
+    inputText = open("kargerMinCutInput.txt","r")
     for line in inputText.readlines():
 	lineFormatted = line.rstrip().split('\t')
 	vertices.append([])
