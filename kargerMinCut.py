@@ -15,10 +15,11 @@ def kargersContract():
 	lineFormatted = line.rstrip().split('\t')
 	vertices.append([])
 	for vertex in lineFormatted:
-	    currentVertex = int(lineFormatted[0]) - 1
-	    vertices[currentVertex].append(int(vertex)-1)
+	    currentVertex = int(lineFormatted[0]) - 1     #-1 to change range starting with 0
+	    if not currentVertex +1 == vertex:		    #remove self-loops
+		vertices[currentVertex].append(int(vertex)-1)
 
-    leftOverVertices = [v for v in range(len(vertices))]		
+    leftOverVertices = range(len(vertices))		
 
     #do contractions until only two vertices left and count the number of edges
     while len(leftOverVertices) > 2:
@@ -28,7 +29,9 @@ def kargersContract():
 	toDiscontinue = leftOverVertices[random.randint(0,len(leftOverVertices)-1)]
 	contractTo = vertices[toDiscontinue][random.randint(0,len(vertices[toDiscontinue])-1)]
 	    
-	print "contractTo:"+repr(contractTo)+"; toDiscontinue: "+repr(toDiscontinue) 	
+	#remove self-loops, aka edges with the same vertex at each end
+	vertices[toDiscontinue]  = [v for v in vertices[toDiscontinue] if v!=toDiscontinue]
+	#print "contractTo:"+repr(contractTo)+"; toDiscontinue: "+repr(toDiscontinue) 	
 
 	leftOverVertices = [v for v in leftOverVertices if v!=toDiscontinue]
 
@@ -37,26 +40,22 @@ def kargersContract():
 
 	#rename all the toDiscontinued vertices to contractTo
 	#faster alternative: go to the toDiscontinue list and check the list of the vertices named there for toDiscontinued
-	vertices = [[contractTo if vertix==toDiscontinue else vertix for vertix in lines]for lines in vertices]
+	vertices = [[(contractTo if vertix==toDiscontinue else vertix) for vertix in lines]for lines in vertices]
 
 	#remove self-loops, aka edges with the same vertex at each end
 	vertices[contractTo] = [v for v in vertices[contractTo] if v!=contractTo]
 
 	#print "length: "+repr(len(vertices[contractTo]))+"joinedContracted: " + repr(vertices[contractTo])
     
-    #TODO bug: the last two vertices should only name each other, most likely self-loops are somehow not removed	
-    print leftOverVertices
-    print vertices[leftOverVertices[0]]
-    print vertices[leftOverVertices[1]]
     return len(vertices[leftOverVertices[0]])	    
  
 #repeat algortihm n^2*m times and remember smallest number of edges
-repeatTimes = 1	#TODO reset to n^2*m after debugging
+repeatTimes = 4000	#TODO reset to n^2*m after debugging
 minCut = 50000000 #arbitrary high number
 for r in range(repeatTimes):
     someCut = kargersContract()
-    print someCut   
     if someCut < minCut:
+	print someCut
 	minCut = someCut
-print minCut
+print "minimum Cut: " +repr(minCut)
     
