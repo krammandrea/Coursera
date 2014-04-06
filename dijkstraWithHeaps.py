@@ -28,14 +28,20 @@ class Graph():
 	self.heap=Heap()
 	for i in range(1,n+1):
 	    self.vertices.append(Vertex(idNumber = i))
+	self.heapAlternative = []
     def extractMin(self):
-	return self.heap.extractMin()
+	#return self.heap.extractMin()
+	shortestInd = self.heapAlternative.index(min(self.heapAlternative, key= lambda vertex: vertex.shortestLength))
+	return self.heapAlternative.pop(shortestInd)
+	
     def overwrite(self,vertex,newLength):
 	vertex.shortestLength = newLength
 	if vertex.positionInHeap == None:
-	    self.heap.insert(objectToInsert = vertex,key= newLength)
+	    #self.heap.insert(objectToInsert = vertex,key= newLength)
+	    self.heapAlternative.append(vertex)
 	else:
-	    self.heap.updateSmallerKeyAt(vertex.positionInHeap)
+	    #self.heap.updateSmallerKeyAt(vertex.positionInHeap)
+	    pass
     def printyourself(self):
 	print "\nGraph:"
 	for v in self.vertices:
@@ -63,6 +69,7 @@ class Heap(object):
 	else:
 	    return i//2
     def smallestChild(self,i):
+	#TODO bug: compare keys not indizes
 	return min((2*i)+1,(2*i)+2)
     def swap(self,i,j):
 	self.nodes[i], self.nodes[j]= self.nodes[j], self.nodes[i]
@@ -83,7 +90,7 @@ class Heap(object):
     def printyourself(self):	
 	print "\n"
 	for a in self.nodes:
-	    print repr(a.key) + ":" + repr(a.objectToStore.nr) + "\t",
+	    print repr(a.key) + ":" + repr(a.objectToStore.nr) + "\t", 
     def insert(self, objectToInsert, key):
 	#add to the buttom
 	self.nodes.append(self.Node(objectToInsert,key))
@@ -121,7 +128,7 @@ def computeShortestDistance(start, end):
 	startingVertex = graph.vertices[0]
 	inputfile = open("dijkstraTestInput.txt","r")
 	"""
-
+	"""
 	n=49
 	graph = Graph(n)
 	targetVertex = graph.vertices[end]
@@ -133,7 +140,7 @@ def computeShortestDistance(start, end):
 	targetVertex = graph.vertices[end]
 	startingVertex = graph.vertices[start]
 	inputfile = open("dijkstraInput.txt","r")
-	"""
+	
 	"""
 	n=11
 	graph = Graph(n)
@@ -170,13 +177,30 @@ def computeShortestDistance(start, end):
 		    #print arc.pointsTo.shortestLength
 		    if newDistance < arc.pointsTo.shortestLength: 
 			graph.overwrite(vertex = arc.pointsTo, newLength = newDistance)
-		
-	print "shortest path to " + repr(graph.vertices[end].nr) + " is " + repr(graph.vertices[end].shortestLength) + repr(graph.vertices[end].completed)
+#   print "shortest path to " + repr(graph.vertices[end].nr) + " is " + repr(graph.vertices[end].shortestLength) + repr(graph.vertices[end].completed)
+	print repr(graph.vertices[end].shortestLength),
+"""
+#test heap
+import random
 
+class N:
+    def __init__(self, value):
+        self.value = value
 
-computeShortestDistance(21,25)
-#for a in [6,36,58,81,98,114,132,164,187,196]:
-#    computeShortestDistance(0,a)
+r = [N(n) for n in range(100)]
+random.shuffle(r)
+
+h = Heap()
+
+for e in r:
+    h.insert(e, e.value)
+
+while True:
+    print h.extractMin().value
+"""
+#computeShortestDistance(21,25)
+for a in [6,36,58,81,98,114,132,164,187,196]:
+    computeShortestDistance(0,a)
 #
 #
 #
